@@ -64,20 +64,23 @@ describe("packCards", () => {
       ]);
     });
 
-    it("keeps partial page open across a two-card model", () => {
-      // The pair gets its own page; the deferred single's slot stays open for a later single
+    it("buffers a two-card model behind an open partial, preserving original order", () => {
+      // Single A opens a partial; pair B is buffered; at end, partial (A alone) is committed
+      // first, then the buffered pair follows.
       expect(packCards([[c(1, "left")], [c(2, "left"), c(2, "right")]], [], false)).toEqual([
-        { left: c(2, "left"), right: c(2, "right") },
         { left: c(1, "left"), right: null },
+        { left: c(2, "left"), right: c(2, "right") },
       ]);
     });
 
-    it("fills a deferred single slot with the next single after a pair", () => {
+    it("fills the partial slot with the next single, then flushes buffered pairs", () => {
+      // Single A opens partial; pair B is buffered; single C fills A's partial;
+      // then B's page is emitted.
       expect(
         packCards([[c(1, "left")], [c(2, "left"), c(2, "right")], [c(3, "right")]], [], false),
       ).toEqual([
-        { left: c(2, "left"), right: c(2, "right") },
         { left: c(1, "left"), right: c(3, "right") },
+        { left: c(2, "left"), right: c(2, "right") },
       ]);
     });
   });
@@ -123,6 +126,15 @@ describe("packCards", () => {
       expect(packCards([], [c(6, "left"), c(6, "right"), c(7, "left")], true)).toEqual([
         { left: c(6, "left"), right: c(6, "right") },
         { left: c(7, "left"), right: null },
+      ]);
+    });
+
+    it("flushes an open model-card partial before a faction pair", () => {
+      // Single model card opens a partial; faction has a pair, so model partial is
+      // committed first (empty right), then the faction pair gets its own page.
+      expect(packCards([[c(1, "left")]], [c(6, "left"), c(6, "right")], true)).toEqual([
+        { left: c(1, "left"), right: null },
+        { left: c(6, "left"), right: c(6, "right") },
       ]);
     });
   });

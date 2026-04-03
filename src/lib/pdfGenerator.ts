@@ -39,11 +39,16 @@ export function packCards(
 ): OutputSlot[] {
   const pages: OutputSlot[] = [];
   let partial: OutputSlot | null = null;
+  const pairBuffer: OutputSlot[] = [];
 
   function commitPartial() {
     if (partial !== null) {
       pages.push(partial);
       partial = null;
+      for (const slot of pairBuffer) {
+        pages.push(slot);
+      }
+      pairBuffer.length = 0;
     }
   }
 
@@ -56,6 +61,14 @@ export function packCards(
     }
   }
 
+  function addPair(first: CardLocation, second: CardLocation) {
+    if (partial !== null) {
+      pairBuffer.push({ left: first, right: second });
+    } else {
+      pages.push({ left: first, right: second });
+    }
+  }
+
   function addGroup(cards: CardLocation[]) {
     const [first, second, ...rest] = cards;
     if (first === undefined) return;
@@ -63,8 +76,7 @@ export function packCards(
     if (second === undefined) {
       addSingle(first);
     } else {
-      // First two always get their own page; don't flush partial — a later single can fill it
-      pages.push({ left: first, right: second });
+      addPair(first, second);
       for (const card of rest) {
         addSingle(card);
       }
@@ -76,6 +88,10 @@ export function packCards(
   }
 
   if (includeFactionCards) {
+    // Faction pairs flush model-card state first; faction singles can still fill an open slot.
+    if (factionCards.length >= 2) {
+      commitPartial();
+    }
     addGroup(factionCards);
   }
 
