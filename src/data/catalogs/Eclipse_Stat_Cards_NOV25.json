@@ -1,0 +1,82 @@
+{
+  "sha256": "fc797712bec0ff5e6796eac9a126b5e1d479832b7faaaaa0662c6a9ac92c9473",
+  "faction": "Eclipse Sisterhood",
+  "releaseDate": "2025-11",
+  "models": [
+    {
+      "name": "Bladedaughter",
+      "cards": [{ "page": 1, "side": "left" }]
+    },
+    {
+      "name": "Nemesis",
+      "cards": [{ "page": 1, "side": "right" }]
+    },
+    {
+      "name": "Suneater",
+      "cards": [
+        { "page": 2, "side": "left" },
+        { "page": 2, "side": "right" }
+      ]
+    },
+    {
+      "name": "Battle Sister",
+      "cards": [{ "page": 3, "side": "left" }]
+    },
+    {
+      "name": "Bladedaughter Aspirant",
+      "cards": [{ "page": 3, "side": "right" }]
+    },
+    {
+      "name": "Izchaki Chaser",
+      "cards": [{ "page": 4, "side": "left" }]
+    },
+    {
+      "name": "Nightwhisper",
+      "cards": [{ "page": 4, "side": "right" }]
+    },
+    {
+      "name": "Manslayer Assassin",
+      "cards": [{ "page": 5, "side": "left" }]
+    },
+    {
+      "name": "Manslayer Sniper",
+      "cards": [{ "page": 5, "side": "right" }]
+    },
+    {
+      "name": "Secret Sister",
+      "cards": [{ "page": 6, "side": "left" }]
+    },
+    {
+      "name": "Shadow Dancer",
+      "cards": [{ "page": 6, "side": "right" }]
+    },
+    { "name": "Sky Sister", "cards": [{ "page": 7, "side": "left" }] },
+
+    {
+      "name": "Void Agent",
+      "cards": [{ "page": 7, "side": "right" }]
+    },
+
+    {
+      "name": "Manhunter",
+      "cards": [{ "page": 8, "side": "left" }]
+    },
+    {
+      "name": "Rebel Maiden",
+      "cards": [{ "page": 8, "side": "right" }]
+    },
+    {
+      "name": "Throatseeker",
+      "cards": [{ "page": 9, "side": "left" }]
+    },
+    {
+      "name": "Untamed",
+      "cards": [{ "page": 9, "side": "right" }]
+    }
+  ],
+  "factionCards": [
+    { "page": 10, "side": "left" },
+    { "page": 10, "side": "right" },
+    { "page": 11, "side": "left" }
+  ]
+}

@@ -1,9 +1,22 @@
 <script setup lang="ts">
-import TheWelcome from "../components/TheWelcome.vue";
+import FileUpload from "@/components/FileUpload.vue";
+import ModelSelector from "@/components/ModelSelector.vue";
+import { useAppStore } from "@/stores/app";
+
+const store = useAppStore();
 </script>
 
 <template>
   <main>
-    <TheWelcome />
+    <FileUpload />
+    <ModelSelector v-if="store.catalog !== null && store.fileStatus !== 'unknown'" />
   </main>
 </template>
+
+<style scoped>
+main {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+</style>

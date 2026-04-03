@@ -7,7 +7,7 @@ export const PAGE_HEIGHT_PT = 612;
 export const SPLIT_X_PT = 364.5;
 
 export interface CardLocation {
-  page: number; // 0-indexed page in source PDF
+  page: number; // 1-indexed page in source PDF
   side: "left" | "right";
 }
 
@@ -109,7 +109,7 @@ async function placeCard(
   slot: "left" | "right",
   embedCache: Map<string, PDFEmbeddedPage>,
 ): Promise<void> {
-  const sourcePage = sourcePdf.getPage(card.page);
+  const sourcePage = sourcePdf.getPage(card.page - 1);
 
   const srcLeft = card.side === "left" ? 0 : SPLIT_X_PT;
   const srcRight = card.side === "left" ? SPLIT_X_PT : PAGE_WIDTH_PT;
