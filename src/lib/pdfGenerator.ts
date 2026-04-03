@@ -3,8 +3,15 @@ import { PDFDocument, type PDFEmbeddedPage, type PDFPage } from "pdf-lib";
 // Letter landscape: 11" × 8.5" at 72 pt/in
 export const PAGE_WIDTH_PT = 792;
 export const PAGE_HEIGHT_PT = 612;
-// Split at 5-1/16" from left edge
-export const SPLIT_X_PT = 364.5;
+
+// Card boundaries within the source PDF (points from left edge)
+export const LEFT_CARD_LEFT_PT = 26.8;
+export const LEFT_CARD_RIGHT_PT = 386.8;
+export const RIGHT_CARD_LEFT_PT = 396;
+export const RIGHT_CARD_RIGHT_PT = 756;
+
+export const LEFT_CARD_WIDTH_PT = LEFT_CARD_RIGHT_PT - LEFT_CARD_LEFT_PT; // 360
+export const RIGHT_CARD_WIDTH_PT = RIGHT_CARD_RIGHT_PT - RIGHT_CARD_LEFT_PT; // 360
 
 export interface CardLocation {
   page: number; // 1-indexed page in source PDF
@@ -111,8 +118,8 @@ async function placeCard(
 ): Promise<void> {
   const sourcePage = sourcePdf.getPage(card.page - 1);
 
-  const srcLeft = card.side === "left" ? 0 : SPLIT_X_PT;
-  const srcRight = card.side === "left" ? SPLIT_X_PT : PAGE_WIDTH_PT;
+  const srcLeft = card.side === "left" ? LEFT_CARD_LEFT_PT : RIGHT_CARD_LEFT_PT;
+  const srcRight = card.side === "left" ? LEFT_CARD_RIGHT_PT : RIGHT_CARD_RIGHT_PT;
   const cardWidth = srcRight - srcLeft;
 
   const cacheKey = `${card.page}:${card.side}`;
@@ -127,6 +134,6 @@ async function placeCard(
     embedCache.set(cacheKey, embedded);
   }
 
-  const destX = slot === "left" ? 0 : SPLIT_X_PT;
+  const destX = slot === "left" ? LEFT_CARD_LEFT_PT : RIGHT_CARD_LEFT_PT;
   outputPage.drawPage(embedded, { x: destX, y: 0, width: cardWidth, height: PAGE_HEIGHT_PT });
 }
