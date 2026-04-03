@@ -79,10 +79,11 @@ bundled catalogs. There are three outcomes:
 Output pages are full letter landscape (same dimensions as the source), with one card on the left and one on the right.
 The split point is 5-1/16" from the left edge. The packing algorithm:
 
-1. **Two-card models:** The two cards always occupy both slots of one output page together.
-2. **Three-card models:** The first two cards share one output page; the third goes into the next available left slot.
-3. **Single-card models** (and the third card of a three-card model): Fill remaining slots. When a left slot is open,
-   the next single-card item goes on the right of that same page.
+1. **Two-card models:** The two cards always occupy both slots of one output page together. If a single-card slot is
+   open when a two-card model is encountered, that slot stays open — a later single-card item will fill it.
+2. **Three-card models:** The first two cards share one output page; the third is treated as a single-card item.
+3. **Single-card models** (and the third card of a three-card model): Fill the next open slot. If a right slot is open,
+   fill it; otherwise, place the card in the left slot of a new page.
 4. **Faction cards:** Appended after all model cards, using the same algorithm as model cards, based on the number of
    faction cards. (For instance, a faction with three cards packs those cards in the same manner as a model with three
    cards.)
