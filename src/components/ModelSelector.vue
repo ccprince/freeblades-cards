@@ -44,7 +44,7 @@ async function generate() {
             :checked="store.selectedModelNames.includes(model.name)"
             @change="store.toggleModel(model.name)"
           />
-          {{ model.name }}
+          {{ model.name }}{{ model.cards.length > 1 ? ` (${model.cards.length} cards)` : "" }}
         </label>
       </li>
     </ul>
@@ -55,7 +55,11 @@ async function generate() {
         :checked="store.includeFactionCards"
         @change="store.setIncludeFactionCards(($event.target as HTMLInputElement).checked)"
       />
-      Include faction cards
+      Include faction cards{{
+        store.indexedFile!.factionCards.length > 1
+          ? ` (${store.indexedFile!.factionCards.length} cards)`
+          : ""
+      }}
     </label>
 
     <button
