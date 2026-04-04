@@ -13,8 +13,8 @@ async function generate() {
     const bytes = await generatePdf(
       store.pdfBytes,
       store.selectedModelGroups,
-      store.indexedFile.factionCards,
-      store.includeFactionCards,
+      store.indexedFile.ruleSummaryCards,
+      store.includeRuleSummaryCards,
     );
     const blob = new Blob([bytes as Uint8Array<ArrayBuffer>], { type: "application/pdf" });
     const url = URL.createObjectURL(blob);
@@ -49,15 +49,15 @@ async function generate() {
       </li>
     </ul>
 
-    <label v-if="store.indexedFile!.factionCards.length > 0" class="faction-cards-toggle">
+    <label v-if="store.indexedFile!.ruleSummaryCards.length > 0" class="rule-summary-cards-toggle">
       <input
         type="checkbox"
-        :checked="store.includeFactionCards"
-        @change="store.setIncludeFactionCards(($event.target as HTMLInputElement).checked)"
+        :checked="store.includeRuleSummaryCards"
+        @change="store.setIncludeRuleSummaryCards(($event.target as HTMLInputElement).checked)"
       />
-      Include faction cards{{
-        store.indexedFile!.factionCards.length > 1
-          ? ` (${store.indexedFile!.factionCards.length} cards)`
+      Include rule summary cards{{
+        store.indexedFile!.ruleSummaryCards.length > 1
+          ? ` (${store.indexedFile!.ruleSummaryCards.length} cards)`
           : ""
       }}
     </label>
@@ -127,7 +127,7 @@ async function generate() {
   background: #f9f9f9;
 }
 
-.faction-cards-toggle {
+.rule-summary-cards-toggle {
   display: flex;
   align-items: center;
   gap: 0.5rem;

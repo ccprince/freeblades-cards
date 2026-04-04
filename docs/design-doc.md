@@ -21,8 +21,8 @@ left side of the page, and one is on the right side of the page.
 - **App knows where to find each card:** The app knows where each model's card(s) can be found in the PDF, so the user
   can select by model, and not by page. In fact, the app parses the PDF, looking for the identifier on the bottom right
   corner of the back of each card.
-- **Faction cards:** The PDFs include cards that describe the faction itself (faction rules, special abilities) rather
-  than individual model stat cards. The user can opt-in to include these in the output via a checkbox.
+- **Rule summary cards:** The PDFs include cards that describe the faction itself (faction rules, special abilities)
+  rather than individual model stat cards. The user can opt-in to include these in the output via a checkbox.
 - **Easy way to notify of unsupported files:** In the inevitable case where the user has a file that isn't supported,
   there needs to be an easy way to let the dev know that an update is needed. _(Because of automatic indexing, an
   unsupported file is a bug, and not an expected part of a new file release. The exact mechanism is still TBD, but will
@@ -51,9 +51,9 @@ The split point is 5-1/16" from the left edge. The packing algorithm:
 2. **Three-card models:** The first two cards share one output page; the third is treated as a single-card item.
 3. **Single-card models** (and the third card of a three-card model): Fill the next open slot. If a right slot is open,
    fill it; otherwise, place the card in the left slot of a new page.
-4. **Faction cards:** Appended after all model cards, using the same algorithm as model cards, based on the number of
-   faction cards. (For instance, a faction with three cards packs those cards in the same manner as a model with three
-   cards.)
+4. **Rule summary cards:** Appended after all model cards, using the same algorithm as model cards, based on the number
+   of rule summary cards. (For instance, a faction with three cards packs those cards in the same manner as a model with
+   three cards.)
 5. **Empty right slots:** Left blank (white) when no card is available to fill them.
 
 ## Implementation notes
@@ -62,6 +62,6 @@ The ideal user flow looks like:
 
 - The user opens a stat-card PDF in the app
 - The app parses the file to determine which models are present
-- The app presents a checklist of the models in that file, along with an "include faction card(s)" checkbox
+- The app presents a checklist of the models in that file, along with an "include rule summary card(s)" checkbox
 - The user selects the desired subset
 - The app creates a new PDF, pulling cards from the opened PDF, and lets the user save it.

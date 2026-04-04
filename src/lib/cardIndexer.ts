@@ -6,7 +6,7 @@ const LEFT_ZONE_MIN = 0.3;
 const LEFT_ZONE_MAX = 0.5;
 const RIGHT_ZONE_MIN = 0.8;
 const Y_GROUPING_TOLERANCE = 3;
-const FACTION_CARD_MARKER = "RULES REFERENCE";
+const RULE_SUMMARY_CARD_MARKER = "RULES REFERENCE";
 
 // ---------------------------------------------------------------------------
 // Internal types
@@ -29,14 +29,14 @@ interface ModelCard {
   side: "left" | "right";
 }
 
-interface FactionCardResult {
+interface RuleSummaryCardResult {
   location: CardLocation;
   factionName: string;
 }
 
 export interface PageResult {
   modelCards: ModelCard[];
-  factionCards: FactionCardResult[];
+  ruleSummaryCards: RuleSummaryCardResult[];
 }
 
 // ---------------------------------------------------------------------------
@@ -80,7 +80,7 @@ function groupByY(items: RawTextItem[]): RawTextItem[][] {
 
 /**
  * Processes raw text items from a single PDF page and classifies them as
- * model cards or faction cards based on position and content.
+ * model cards or rule summary cards based on position and content.
  */
 export function processPageItems(
   pageNumber: number,
@@ -102,7 +102,7 @@ export function processPageItems(
   }
 
   const modelCards: ModelCard[] = [];
-  const factionCards: FactionCardResult[] = [];
+  const ruleSummaryCards: RuleSummaryCardResult[] = [];
 
   const processGroup = (group: RawTextItem[], side: "left" | "right") => {
     const sorted = [...group].sort((a, b) => a.x - b.x);
@@ -112,10 +112,10 @@ export function processPageItems(
       .trim();
     if (!text) return;
 
-    const rulesRefIdx = text.indexOf(FACTION_CARD_MARKER);
+    const rulesRefIdx = text.indexOf(RULE_SUMMARY_CARD_MARKER);
     if (rulesRefIdx !== -1) {
       const rawFactionName = text.slice(0, rulesRefIdx).trim();
-      factionCards.push({
+      ruleSummaryCards.push({
         location: { page: pageNumber, side },
         factionName: rawFactionName ? toTitleCase(rawFactionName) : "",
       });
@@ -127,7 +127,7 @@ export function processPageItems(
   groupByY(leftItems).forEach((group) => processGroup(group, "left"));
   groupByY(rightItems).forEach((group) => processGroup(group, "right"));
 
-  return { modelCards, factionCards };
+  return { modelCards, ruleSummaryCards };
 }
 
 /**
@@ -135,12 +135,12 @@ export function processPageItems(
  */
 export function buildIndexedFile(pageResults: PageResult[]): IndexedFile {
   let faction = "";
-  const allFactionCards: CardLocation[] = [];
+  const allRuleSummaryCards: CardLocation[] = [];
   const modelMap = new Map<string, CardLocation[]>();
 
   for (const result of pageResults) {
-    for (const fc of result.factionCards) {
-      allFactionCards.push(fc.location);
+    for (const fc of result.ruleSummaryCards) {
+      allRuleSummaryCards.push(fc.location);
       if (!faction && fc.factionName) {
         faction = fc.factionName;
       }
@@ -161,7 +161,7 @@ export function buildIndexedFile(pageResults: PageResult[]): IndexedFile {
     cards,
   }));
 
-  return { faction, models, factionCards: allFactionCards };
+  return { faction, models, ruleSummaryCards: allRuleSummaryCards };
 }
 
 // ---------------------------------------------------------------------------

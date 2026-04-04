@@ -10,7 +10,7 @@ export const useAppStore = defineStore("app", () => {
   const indexedFile = ref<IndexedFile | null>(null);
   const indexError = ref<string | null>(null);
   const selectedModelNames = ref<string[]>([]);
-  const includeFactionCards = ref(false);
+  const includeRuleSummaryCards = ref(false);
   const isLoading = ref(false);
 
   const selectedModelGroups = computed<CardLocation[][]>(() => {
@@ -26,13 +26,13 @@ export const useAppStore = defineStore("app", () => {
     indexedFile.value = null;
     indexError.value = null;
     selectedModelNames.value = [];
-    includeFactionCards.value = false;
+    includeRuleSummaryCards.value = false;
 
     try {
       const arrayBuffer = await file.arrayBuffer();
       pdfBytes.value = new Uint8Array(arrayBuffer);
       const result = await indexFile(pdfBytes.value);
-      if (result.models.length === 0 && result.factionCards.length === 0) {
+      if (result.models.length === 0 && result.ruleSummaryCards.length === 0) {
         indexError.value = "No stat cards were found in this PDF.";
       } else {
         indexedFile.value = result;
@@ -62,8 +62,8 @@ export const useAppStore = defineStore("app", () => {
     selectedModelNames.value = [];
   }
 
-  function setIncludeFactionCards(val: boolean) {
-    includeFactionCards.value = val;
+  function setIncludeRuleSummaryCards(val: boolean) {
+    includeRuleSummaryCards.value = val;
   }
 
   return {
@@ -72,13 +72,13 @@ export const useAppStore = defineStore("app", () => {
     indexedFile,
     indexError,
     selectedModelNames,
-    includeFactionCards,
+    includeRuleSummaryCards,
     isLoading,
     selectedModelGroups,
     loadFile,
     toggleModel,
     selectAll,
     selectNone,
-    setIncludeFactionCards,
+    setIncludeRuleSummaryCards,
   };
 });

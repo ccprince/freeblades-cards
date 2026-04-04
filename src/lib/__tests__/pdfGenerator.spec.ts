@@ -103,26 +103,26 @@ describe("packCards", () => {
     });
   });
 
-  describe("faction cards (packCards)", () => {
-    it("appends faction cards when includeFactionCards is true", () => {
+  describe("rule summary cards (packCards)", () => {
+    it("appends rule summary cards when includeRuleSummaryCards is true", () => {
       expect(packCards([[c(1, "left")]], [c(6, "left")], true)).toEqual([
         { left: c(1, "left"), right: c(6, "left") },
       ]);
     });
 
-    it("omits faction cards when includeFactionCards is false", () => {
+    it("omits rule summary cards when includeRuleSummaryCards is false", () => {
       expect(packCards([[c(1, "left")]], [c(6, "left")], false)).toEqual([
         { left: c(1, "left"), right: null },
       ]);
     });
 
-    it("treats two faction cards as a paired group", () => {
+    it("treats two rule summary cards as a paired group", () => {
       expect(packCards([], [c(6, "left"), c(6, "right")], true)).toEqual([
         { left: c(6, "left"), right: c(6, "right") },
       ]);
     });
 
-    it("gives three faction cards their own page plus a left slot", () => {
+    it("gives three rule summary cards their own page plus a left slot", () => {
       expect(packCards([], [c(6, "left"), c(6, "right"), c(7, "left")], true)).toEqual([
         { left: c(6, "left"), right: c(6, "right") },
         { left: c(7, "left"), right: null },
@@ -177,21 +177,21 @@ describe("generatePdf", () => {
     expect(height).toBe(PAGE_HEIGHT_PT);
   });
 
-  it("includes faction cards when requested", async () => {
+  it("includes rule summary cards when requested", async () => {
     const source = await makeSourcePdf(6);
     const output = await generatePdf(source, [[c(1, "left")]], [c(6, "left")], true);
     const pdf = await loadPdf(output);
-    // One single + one faction single → paired onto 1 page
+    // One single + one rule summary single → paired onto 1 page
     expect(pdf.getPageCount()).toBe(1);
   });
 
-  it("excludes faction cards when not requested", async () => {
+  it("excludes rule summary cards when not requested", async () => {
     const source = await makeSourcePdf(6);
-    // With faction cards excluded, the single model card has no partner → 1 page with empty right slot
-    const withoutFaction = await generatePdf(source, [[c(1, "left")]], [c(6, "left")], false);
-    expect((await loadPdf(withoutFaction)).getPageCount()).toBe(1);
-    // With faction cards included, the faction card fills the right slot → still 1 page
-    const withFaction = await generatePdf(source, [[c(1, "left")]], [c(6, "left")], true);
-    expect((await loadPdf(withFaction)).getPageCount()).toBe(1);
+    // With rule summary cards excluded, the single model card has no partner → 1 page with empty right slot
+    const withoutRuleSummary = await generatePdf(source, [[c(1, "left")]], [c(6, "left")], false);
+    expect((await loadPdf(withoutRuleSummary)).getPageCount()).toBe(1);
+    // With rule summary cards included, the rule summary card fills the right slot → still 1 page
+    const withRuleSummary = await generatePdf(source, [[c(1, "left")]], [c(6, "left")], true);
+    expect((await loadPdf(withRuleSummary)).getPageCount()).toBe(1);
   });
 });

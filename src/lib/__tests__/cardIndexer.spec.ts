@@ -17,19 +17,19 @@ describe("processPageItems", () => {
   it("ignores items above the bottom strip", () => {
     const result = processPageItems(1, [{ str: "WARRIOR", x: LEFT_X, y: ABOVE_STRIP_Y }], DIMS);
     expect(result.modelCards).toHaveLength(0);
-    expect(result.factionCards).toHaveLength(0);
+    expect(result.ruleSummaryCards).toHaveLength(0);
   });
 
   it("ignores items in the far-left zone (date codes)", () => {
     const result = processPageItems(1, [{ str: "APR22", x: FAR_LEFT_X, y: IN_STRIP_Y }], DIMS);
     expect(result.modelCards).toHaveLength(0);
-    expect(result.factionCards).toHaveLength(0);
+    expect(result.ruleSummaryCards).toHaveLength(0);
   });
 
   it("classifies a left-zone item as a left-side model card", () => {
     const result = processPageItems(1, [{ str: "WARRIOR", x: LEFT_X, y: IN_STRIP_Y }], DIMS);
     expect(result.modelCards).toEqual([{ name: "Warrior", page: 1, side: "left" }]);
-    expect(result.factionCards).toHaveLength(0);
+    expect(result.ruleSummaryCards).toHaveLength(0);
   });
 
   it("classifies a right-zone item as a right-side model card", () => {
@@ -72,29 +72,29 @@ describe("processPageItems", () => {
     expect(result.modelCards).toHaveLength(2);
   });
 
-  it("detects a RULES REFERENCE label as a faction card", () => {
+  it("detects a RULES REFERENCE label as a rule summary card", () => {
     const items = [
       { str: "ECLIPSE", x: LEFT_X, y: IN_STRIP_Y },
       { str: "RULES REFERENCE", x: LEFT_X + 40, y: IN_STRIP_Y },
     ];
     const result = processPageItems(1, items, DIMS);
-    expect(result.factionCards).toHaveLength(1);
-    expect(result.factionCards[0]!.location).toEqual({ page: 1, side: "left" });
-    expect(result.factionCards[0]!.factionName).toBe("Eclipse");
+    expect(result.ruleSummaryCards).toHaveLength(1);
+    expect(result.ruleSummaryCards[0]!.location).toEqual({ page: 1, side: "left" });
+    expect(result.ruleSummaryCards[0]!.factionName).toBe("Eclipse");
     expect(result.modelCards).toHaveLength(0);
   });
 
-  it("handles a RULES REFERENCE label with no preceding faction name text", () => {
+  it("handles a RULES REFERENCE label with no preceding rule summary name text", () => {
     const result = processPageItems(
       1,
       [{ str: "RULES REFERENCE", x: LEFT_X, y: IN_STRIP_Y }],
       DIMS,
     );
-    expect(result.factionCards).toHaveLength(1);
-    expect(result.factionCards[0]!.factionName).toBe("");
+    expect(result.ruleSummaryCards).toHaveLength(1);
+    expect(result.ruleSummaryCards[0]!.factionName).toBe("");
   });
 
-  it("returns a model card and a faction card from the same page", () => {
+  it("returns a model card and a rule summary card from the same page", () => {
     const items = [
       { str: "WARRIOR", x: LEFT_X, y: IN_STRIP_Y },
       { str: "ECLIPSE", x: RIGHT_X, y: IN_STRIP_Y },
@@ -102,13 +102,13 @@ describe("processPageItems", () => {
     ];
     const result = processPageItems(1, items, DIMS);
     expect(result.modelCards).toHaveLength(1);
-    expect(result.factionCards).toHaveLength(1);
+    expect(result.ruleSummaryCards).toHaveLength(1);
   });
 
   it("returns empty results for a page with no qualifying items", () => {
     const result = processPageItems(1, [], DIMS);
     expect(result.modelCards).toHaveLength(0);
-    expect(result.factionCards).toHaveLength(0);
+    expect(result.ruleSummaryCards).toHaveLength(0);
   });
 
   it("passes the correct page number through to output", () => {
@@ -119,12 +119,12 @@ describe("processPageItems", () => {
 
 describe("buildIndexedFile", () => {
   it("returns an empty IndexedFile for empty input", () => {
-    expect(buildIndexedFile([])).toEqual({ faction: "", models: [], factionCards: [] });
+    expect(buildIndexedFile([])).toEqual({ faction: "", models: [], ruleSummaryCards: [] });
   });
 
   it("builds a single model with one card location", () => {
     const pageResults: PageResult[] = [
-      { modelCards: [{ name: "Warrior", page: 1, side: "left" }], factionCards: [] },
+      { modelCards: [{ name: "Warrior", page: 1, side: "left" }], ruleSummaryCards: [] },
     ];
     const result = buildIndexedFile(pageResults);
     expect(result.models).toEqual([{ name: "Warrior", cards: [{ page: 1, side: "left" }] }]);
@@ -132,8 +132,8 @@ describe("buildIndexedFile", () => {
 
   it("merges the same model name from two pages into one ModelEntry", () => {
     const pageResults: PageResult[] = [
-      { modelCards: [{ name: "Suneater", page: 1, side: "left" }], factionCards: [] },
-      { modelCards: [{ name: "Suneater", page: 2, side: "right" }], factionCards: [] },
+      { modelCards: [{ name: "Suneater", page: 1, side: "left" }], ruleSummaryCards: [] },
+      { modelCards: [{ name: "Suneater", page: 2, side: "right" }], ruleSummaryCards: [] },
     ];
     const result = buildIndexedFile(pageResults);
     expect(result.models).toHaveLength(1);
@@ -143,38 +143,38 @@ describe("buildIndexedFile", () => {
     ]);
   });
 
-  it("puts faction cards in factionCards, not models", () => {
+  it("puts rule summary cards in ruleSummaryCards, not models", () => {
     const pageResults: PageResult[] = [
       {
         modelCards: [],
-        factionCards: [{ location: { page: 3, side: "right" }, factionName: "Eclipse" }],
+        ruleSummaryCards: [{ location: { page: 3, side: "right" }, factionName: "Eclipse" }],
       },
     ];
     const result = buildIndexedFile(pageResults);
     expect(result.models).toHaveLength(0);
-    expect(result.factionCards).toEqual([{ page: 3, side: "right" }]);
+    expect(result.ruleSummaryCards).toEqual([{ page: 3, side: "right" }]);
   });
 
-  it("collects multiple faction cards across pages", () => {
+  it("collects multiple rule summary cards across pages", () => {
     const pageResults: PageResult[] = [
       {
         modelCards: [],
-        factionCards: [{ location: { page: 1, side: "left" }, factionName: "Eclipse" }],
+        ruleSummaryCards: [{ location: { page: 1, side: "left" }, factionName: "Eclipse" }],
       },
       {
         modelCards: [],
-        factionCards: [{ location: { page: 2, side: "right" }, factionName: "Eclipse" }],
+        ruleSummaryCards: [{ location: { page: 2, side: "right" }, factionName: "Eclipse" }],
       },
     ];
     const result = buildIndexedFile(pageResults);
-    expect(result.factionCards).toHaveLength(2);
+    expect(result.ruleSummaryCards).toHaveLength(2);
   });
 
   it("extracts the faction name from the first faction card", () => {
     const pageResults: PageResult[] = [
       {
         modelCards: [],
-        factionCards: [{ location: { page: 1, side: "left" }, factionName: "Eclipse" }],
+        ruleSummaryCards: [{ location: { page: 1, side: "left" }, factionName: "Eclipse" }],
       },
     ];
     expect(buildIndexedFile(pageResults).faction).toBe("Eclipse");
@@ -184,15 +184,15 @@ describe("buildIndexedFile", () => {
     const pageResults: PageResult[] = [
       {
         modelCards: [],
-        factionCards: [{ location: { page: 1, side: "left" }, factionName: "" }],
+        ruleSummaryCards: [{ location: { page: 1, side: "left" }, factionName: "" }],
       },
       {
         modelCards: [],
-        factionCards: [{ location: { page: 2, side: "right" }, factionName: "Eclipse" }],
+        ruleSummaryCards: [{ location: { page: 2, side: "right" }, factionName: "Eclipse" }],
       },
       {
         modelCards: [],
-        factionCards: [{ location: { page: 3, side: "left" }, factionName: "Other" }],
+        ruleSummaryCards: [{ location: { page: 3, side: "left" }, factionName: "Other" }],
       },
     ];
     expect(buildIndexedFile(pageResults).faction).toBe("Eclipse");
@@ -205,7 +205,7 @@ describe("buildIndexedFile", () => {
           { name: "Alpha", page: 1, side: "left" },
           { name: "Beta", page: 1, side: "right" },
         ],
-        factionCards: [],
+        ruleSummaryCards: [],
       },
     ];
     const result = buildIndexedFile(pageResults);

@@ -8,5 +8,5 @@ export interface ModelEntry {
 export interface IndexedFile {
   faction: string;
   models: ModelEntry[];
-  factionCards: CardLocation[];
+  ruleSummaryCards: CardLocation[];
 }
