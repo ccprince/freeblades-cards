@@ -33,6 +33,13 @@
   --color-heading: var(--vt-c-text-light-1);
   --color-text: var(--vt-c-text-light-1);
 
+  --color-status-loading-bg: var(--vt-c-white-mute);
+  --color-status-loading-text: rgba(60, 60, 60, 0.66);
+  --color-status-success-bg: #e6f4ea;
+  --color-status-success-text: #2e7d32;
+  --color-status-error-bg: #fdecea;
+  --color-status-error-text: #c62828;
+
   --section-gap: 160px;
 }
 
@@ -47,6 +54,13 @@
 
     --color-heading: var(--vt-c-text-dark-1);
     --color-text: var(--vt-c-text-dark-2);
+
+    --color-status-loading-bg: var(--vt-c-black-mute);
+    --color-status-loading-text: var(--vt-c-text-dark-2);
+    --color-status-success-bg: #1b3a1f;
+    --color-status-success-text: #81c784;
+    --color-status-error-bg: #3b1a1a;
+    --color-status-error-text: #ef9a9a;
   }
 }
 
