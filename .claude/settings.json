@@ -1,5 +1,15 @@
 {
   "permissions": {
-    "allow": ["Bash(npm run:*)", "Bash(git add:*)", "Bash(git commit:*)"]
+    "allow": [
+      "Bash(npm run:*)",
+      "Bash(npm install:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git status)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git -C /home/ccprince/projects/fb-cards add .claude/settings.json)",
+      "Bash(git -C /home/ccprince/projects/fb-cards commit -m \"Broaden allowed git commands in settings\")"
+    ]
   }
 }
