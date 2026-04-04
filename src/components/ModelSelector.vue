@@ -7,20 +7,20 @@ const store = useAppStore();
 const isGenerating = ref(false);
 
 async function generate() {
-  if (!store.pdfBytes || !store.catalog) return;
+  if (!store.pdfBytes || !store.indexedFile) return;
   isGenerating.value = true;
   try {
     const bytes = await generatePdf(
       store.pdfBytes,
       store.selectedModelGroups,
-      store.catalog.factionCards,
+      store.indexedFile.factionCards,
       store.includeFactionCards,
     );
     const blob = new Blob([bytes as Uint8Array<ArrayBuffer>], { type: "application/pdf" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${store.catalog.faction} - selected cards.pdf`;
+    a.download = `${store.indexedFile.faction} - selected cards.pdf`;
     a.click();
     URL.revokeObjectURL(url);
   } finally {
@@ -37,7 +37,7 @@ async function generate() {
     </div>
 
     <ul class="model-list">
-      <li v-for="model in store.catalog!.models" :key="model.name">
+      <li v-for="model in store.indexedFile!.models" :key="model.name">
         <label>
           <input
             type="checkbox"
@@ -49,7 +49,7 @@ async function generate() {
       </li>
     </ul>
 
-    <label v-if="store.catalog!.factionCards.length > 0" class="faction-cards-toggle">
+    <label v-if="store.indexedFile!.factionCards.length > 0" class="faction-cards-toggle">
       <input
         type="checkbox"
         :checked="store.includeFactionCards"

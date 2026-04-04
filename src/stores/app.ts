@@ -1,22 +1,21 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
-import { allCatalogs } from "@/data/catalogs";
-import { hashFile, identifyFile } from "@/lib/fileIdentification";
+import { indexFile } from "@/lib/cardIndexer";
 import type { CardLocation } from "@/lib/pdfGenerator";
-import type { Catalog, FileStatus } from "@/lib/types";
+import type { IndexedFile } from "@/lib/types";
 
 export const useAppStore = defineStore("app", () => {
   const pdfFile = ref<File | null>(null);
   const pdfBytes = ref<Uint8Array | null>(null);
-  const catalog = ref<Catalog | null>(null);
-  const fileStatus = ref<FileStatus | null>(null);
+  const indexedFile = ref<IndexedFile | null>(null);
+  const indexError = ref<string | null>(null);
   const selectedModelNames = ref<string[]>([]);
   const includeFactionCards = ref(false);
   const isLoading = ref(false);
 
   const selectedModelGroups = computed<CardLocation[][]>(() => {
-    if (!catalog.value) return [];
-    return catalog.value.models
+    if (!indexedFile.value) return [];
+    return indexedFile.value.models
       .filter((m) => selectedModelNames.value.includes(m.name))
       .map((m) => m.cards);
   });
@@ -24,18 +23,22 @@ export const useAppStore = defineStore("app", () => {
   async function loadFile(file: File) {
     isLoading.value = true;
     pdfFile.value = file;
-    catalog.value = null;
-    fileStatus.value = null;
+    indexedFile.value = null;
+    indexError.value = null;
     selectedModelNames.value = [];
     includeFactionCards.value = false;
 
     try {
       const arrayBuffer = await file.arrayBuffer();
       pdfBytes.value = new Uint8Array(arrayBuffer);
-      const hash = await hashFile(file);
-      const result = identifyFile(hash, allCatalogs);
-      catalog.value = result.catalog;
-      fileStatus.value = result.status;
+      const result = await indexFile(pdfBytes.value);
+      if (result.models.length === 0 && result.factionCards.length === 0) {
+        indexError.value = "No stat cards were found in this PDF.";
+      } else {
+        indexedFile.value = result;
+      }
+    } catch {
+      indexError.value = "Could not read this file as a Freeblades stat card PDF.";
     } finally {
       isLoading.value = false;
     }
@@ -51,8 +54,8 @@ export const useAppStore = defineStore("app", () => {
   }
 
   function selectAll() {
-    if (!catalog.value) return;
-    selectedModelNames.value = catalog.value.models.map((m) => m.name);
+    if (!indexedFile.value) return;
+    selectedModelNames.value = indexedFile.value.models.map((m) => m.name);
   }
 
   function selectNone() {
@@ -66,8 +69,8 @@ export const useAppStore = defineStore("app", () => {
   return {
     pdfFile,
     pdfBytes,
-    catalog,
-    fileStatus,
+    indexedFile,
+    indexError,
     selectedModelNames,
     includeFactionCards,
     isLoading,

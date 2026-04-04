@@ -9,7 +9,7 @@ const store = useAppStore();
 <template>
   <main>
     <FileUpload />
-    <ModelSelector v-if="store.catalog !== null && store.fileStatus !== 'unknown'" />
+    <ModelSelector v-if="store.indexedFile !== null" />
   </main>
 </template>
 

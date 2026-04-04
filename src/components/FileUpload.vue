@@ -20,19 +20,15 @@ function onFileChange(event: Event) {
       <span v-else>{{ store.pdfFile.name }}</span>
     </label>
 
-    <div v-if="store.isLoading" class="status loading">Identifying file&hellip;</div>
+    <div v-if="store.isLoading" class="status loading">Indexing file&hellip;</div>
 
-    <div v-else-if="store.fileStatus === 'current'" class="status current">
-      {{ store.catalog?.faction }} &mdash; recognized
+    <div v-else-if="store.indexError" class="status error">
+      {{ store.indexError }}
     </div>
 
-    <div v-else-if="store.fileStatus === 'outdated'" class="status outdated">
-      {{ store.catalog?.faction }} &mdash; a newer version of this file is available, but you can
-      still proceed.
-    </div>
-
-    <div v-else-if="store.fileStatus === 'unknown'" class="status unknown">
-      This file isn&rsquo;t recognized. Only supported faction PDFs can be processed.
+    <div v-else-if="store.indexedFile" class="status success">
+      {{ store.indexedFile.faction || "Unknown faction" }} &mdash;
+      {{ store.indexedFile.models.length }} models found
     </div>
   </div>
 </template>
@@ -76,17 +72,12 @@ function onFileChange(event: Event) {
   color: #555;
 }
 
-.status.current {
+.status.success {
   background: #e6f4ea;
   color: #2e7d32;
 }
 
-.status.outdated {
-  background: #fff8e1;
-  color: #f57f17;
-}
-
-.status.unknown {
+.status.error {
   background: #fdecea;
   color: #c62828;
 }
