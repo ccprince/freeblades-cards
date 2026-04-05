@@ -15,8 +15,12 @@ const store = useAppStore();
 
 <style scoped>
 main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   max-width: 600px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
 }
 </style>

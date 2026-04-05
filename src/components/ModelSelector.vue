@@ -1,15 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed } from "vue";
 import { generatePdf, packCards } from "@/lib/pdfGenerator";
 import { useAppStore } from "@/stores/app";
 
 const store = useAppStore();
 const isGenerating = ref(false);
-const rootEl = ref<HTMLElement | null>(null);
-
-onMounted(() => {
-  rootEl.value?.scrollIntoView({ behavior: "smooth", block: "start" });
-});
 
 const outputStats = computed(() => {
   const groups = store.selectedModelGroups;
@@ -50,7 +45,7 @@ async function generate() {
 </script>
 
 <template>
-  <div ref="rootEl" class="model-selector">
+  <div class="model-selector">
     <div class="toolbar">
       <button @click="store.selectAll()">Select All</button>
       <button @click="store.selectNone()">Select None</button>
@@ -107,6 +102,8 @@ async function generate() {
   flex-direction: column;
   gap: 1rem;
   margin-top: 1.5rem;
+  flex: 1;
+  min-height: 0;
 }
 
 .toolbar {
@@ -131,7 +128,8 @@ async function generate() {
   list-style: none;
   padding: 0;
   margin: 0;
-  max-height: 20rem;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   border: 1px solid var(--color-border-hover);
   border-radius: 6px;
@@ -167,8 +165,6 @@ async function generate() {
 }
 
 .generate-footer {
-  position: sticky;
-  bottom: 0;
   background: var(--color-background);
   padding: 0.75rem 0 1rem;
   border-top: 1px solid var(--color-border);
