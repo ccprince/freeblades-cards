@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
 import { generatePdf, packCards } from "@/lib/pdfGenerator";
 import { useAppStore } from "@/stores/app";
+import { computed, ref } from "vue";
 
 const store = useAppStore();
 const isGenerating = ref(false);
@@ -46,9 +46,12 @@ async function generate() {
 
 <template>
   <div class="model-selector">
-    <div class="toolbar">
-      <button @click="store.selectAll()">Select All</button>
-      <button @click="store.selectNone()">Select None</button>
+    <div class="section-header">
+      <span class="section-label">Select models</span>
+      <div class="toolbar">
+        <button @click="store.selectAll()">Select All</button>
+        <button @click="store.selectNone()">Select None</button>
+      </div>
     </div>
 
     <ul class="model-list">
@@ -59,7 +62,10 @@ async function generate() {
             :checked="store.selectedModelNames.includes(model.name)"
             @change="store.toggleModel(model.name)"
           />
-          {{ model.name }}{{ model.cards.length > 1 ? ` (${model.cards.length} cards)` : "" }}
+          <span class="model-name">{{ model.name }}</span>
+          <span v-if="model.cards.length > 1" class="card-count-badge"
+            >{{ model.cards.length }} cards</span
+          >
         </label>
       </li>
     </ul>
@@ -90,6 +96,7 @@ async function generate() {
         :disabled="store.selectedModelNames.length === 0 || isGenerating"
         @click="generate"
       >
+        <span v-if="isGenerating" class="spinner" aria-hidden="true"></span>
         {{ isGenerating ? "Generating…" : "Generate PDF" }}
       </button>
     </div>
@@ -104,6 +111,22 @@ async function generate() {
   margin-top: 1.5rem;
   flex: 1;
   min-height: 0;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.section-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text);
+  opacity: 0.5;
 }
 
 .toolbar {
@@ -142,10 +165,14 @@ async function generate() {
 .model-list li label {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
+  gap: 0.6rem;
+  padding: 0.6rem 1rem;
   cursor: pointer;
   color: var(--color-text);
+  border-left: 2px solid transparent;
+  transition:
+    border-color 0.15s,
+    background-color 0.15s;
 }
 
 .model-list li:not(:last-child) {
@@ -154,6 +181,23 @@ async function generate() {
 
 .model-list li label:hover {
   background: var(--color-background-soft);
+  border-left-color: #1976d2;
+}
+
+.model-name {
+  flex: 1;
+}
+
+.card-count-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: var(--color-background-mute);
+  color: var(--color-text);
+  opacity: 0.7;
+  border: 1px solid var(--color-border-hover);
+  border-radius: 10px;
+  padding: 0.1em 0.5em;
+  line-height: 1.4;
 }
 
 .rule-summary-cards-toggle {
@@ -176,12 +220,16 @@ async function generate() {
 .output-summary {
   font-size: 0.85rem;
   color: var(--color-text);
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 .generate-btn {
-  align-self: flex-start;
-  padding: 0.5rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.65rem 1.25rem;
   background: #1976d2;
   color: white;
   border: none;
@@ -197,5 +245,22 @@ async function generate() {
 .generate-btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  display: inline-block;
+  width: 0.9em;
+  height: 0.9em;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
 }
 </style>

@@ -9,7 +9,9 @@ const store = useAppStore();
 <template>
   <main>
     <FileUpload />
-    <ModelSelector v-if="store.indexedFile !== null" />
+    <Transition name="fade-up">
+      <ModelSelector v-if="store.indexedFile !== null" />
+    </Transition>
   </main>
 </template>
 
@@ -22,5 +24,16 @@ main {
   width: 100%;
   margin: 0 auto;
   padding: 1.5rem 1rem;
+}
+
+.fade-up-enter-active {
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.fade-up-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
 }
 </style>

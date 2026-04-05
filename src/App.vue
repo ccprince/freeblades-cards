@@ -16,8 +16,18 @@ import { RouterView } from "vue-router";
 
 <style scoped>
 header {
-  padding: 1rem 2rem;
+  padding: 1.25rem 2rem;
   border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.header-icon {
+  width: 1.4rem;
+  height: 1.4rem;
+  color: #1976d2;
+  flex-shrink: 0;
 }
 
 h1 {
