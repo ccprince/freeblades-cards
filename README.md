@@ -5,5 +5,5 @@ you're just not using, this app will let you take the PDF and extract only the c
 
 ## Links
 
-- (DGS Games)[https://dgsgames.com/] -- Publisher of the Freeblades fantasy skirmish wargame
-- (Freeblades)[https://dgsgames.com/freeblades-about] -- Fantasy skirmish wargame, set in the world of Faelon
+- [DGS Games](https://dgsgames.com/) -- Publisher of the Freeblades fantasy skirmish wargame
+- [Freeblades](https://dgsgames.com/freeblades-about) -- Fantasy skirmish wargame, set in the world of Faelon
